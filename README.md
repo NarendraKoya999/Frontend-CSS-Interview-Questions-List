@@ -23,7 +23,7 @@
 - [CSS Best Practices](#css-best-practices)
 - [CSS Cross-Browser Compatibility](#css-cross-browser-compatibility)
 - [Miscellaneous](#miscellaneous)
-- [Additional Resources](#additional-resources)
+- [Additional Resources](#additional-resources-books)
 
 ## Basics of CSS
 
