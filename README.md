@@ -23,6 +23,7 @@
 - [CSS Best Practices](#css-best-practices)
 - [CSS Cross-Browser Compatibility](#css-cross-browser-compatibility)
 - [Miscellaneous](#miscellaneous)
+- [Additional Resources](#additional-resources)
 
 ## Basics of CSS
 
@@ -474,6 +475,8 @@
   - Provide vendor prefixes for experimental CSS features.
   - Use feature detection and polyfills for unsupported features.
 
+---
+
 ## Miscellaneous
 
 - **What are CSS sprites, and why are they used?**
@@ -483,3 +486,17 @@
 - **Explain the concept of responsive typography in CSS.**
 
   Responsive typography in CSS involves adjusting font sizes and spacing based on the screen size or viewport. This ensures that text remains legible and visually pleasing on different devices and screen sizes.
+
+---
+
+## Additional Resources :books:
+
+Here are some additional resources to help you further explore CSS:
+
+- [W3Schools CSS Tutorial](https://www.w3schools.com/css/): A comprehensive tutorial with examples and exercises.
+- [MDN Web Docs CSS](https://developer.mozilla.org/en-US/docs/Web/CSS): Mozilla's documentation on CSS.
+- [CSS Tricks](https://css-tricks.com/): A web design community with articles, guides, and inspiration.
+- [A List Apart](https://alistapart.com/): A publication focusing on web design and development, including CSS topics.
+- [Smashing Magazine CSS Section](https://www.smashingmagazine.com/category/css/): Articles, tutorials, and techniques related to CSS.
+
+Happy coding! :tada:
