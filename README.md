@@ -182,9 +182,7 @@ A responsive design can be achieved by using media queries and flexible layouts.
 }
 ```
 
-**Q11. Explain
-
- the purpose of the CSS `@media` rule.**
+**Q11. Explain the purpose of the CSS `@media` rule.**
 
 The `@media` rule is used to apply different styles based on the characteristics of the user's device, such as screen width, height, or orientation. It is a key component of responsive design and allows you to create styles specific to different screen sizes or devices.
 
@@ -567,3 +565,5 @@ To load CSS asynchronously or defer its loading, you can use techniques like:
 - [CSS Secrets: Better Solutions to Everyday Web Design Problems](https://www.goodreads.com/en/book/show/18622232-css-secrets)
 - [CSS: The Definitive Guide](https://www.goodreads.com/en/book/show/24296875-css)
 - [Smashing Book 5: Real-Life Responsive Web Design - Part 1](https://www.goodreads.com/en/book/show/28567956-smashing-book-5)
+
+## Happy Coding :rocket:
