@@ -347,9 +347,7 @@
 
   In this example, all paragraphs except those with the class `.excluded` will have a font size of 16 pixels.
 
-- **Explain the CSS
-
- `::before` and `::after` pseudo-elements.**
+- **Explain the CSS `::before` and `::after` pseudo-elements.**
 
   The `::before` and `::after` pseudo-elements in CSS allow you to insert content before and after the content of an element, respectively. They are often used for decorative elements and can be styled using CSS properties.
 
