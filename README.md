@@ -1,4 +1,4 @@
-# CSS Interview Questions❓ and Answers✔️ :
+# CSS Interview Questions❓ and Answers✔️
 
 ## Table of Contents :bookmark_tabs:
 
