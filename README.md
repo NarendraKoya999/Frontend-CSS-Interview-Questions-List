@@ -1,6 +1,6 @@
-# CSS / CSS3 Interview Questions❓ and Answers✔️
+# CSS / CSS3 Interview Questions ❓ and Answers ✔️ — 2026 Edition
 
-## Table of Contents :bookmark_tabs:
+## Table of Contents 📑
 
 - [Basics of CSS](#basics-of-css)
   - [Introduction to CSS](#introduction-to-css)
@@ -15,6 +15,15 @@
 - [CSS Transforms and Animations](#css-transforms-and-animations)
   - [CSS Transitions and Animations](#css-transitions-and-animations)
   - [CSS Pseudo-Classes and Pseudo-Elements](#css-pseudo-classes-and-pseudo-elements)
+- [CSS Cascade Layers](#css-cascade-layers)
+- [CSS Nesting](#css-nesting)
+- [CSS Container Queries](#css-container-queries)
+- [CSS Scope](#css-scope)
+- [CSS Logical Properties](#css-logical-properties)
+- [CSS Color Functions and Spaces](#css-color-functions-and-spaces)
+- [CSS Scroll-Driven Animations](#css-scroll-driven-animations)
+- [View Transitions API](#view-transitions-api)
+- [CSS Houdini and Custom Properties](#css-houdini-and-custom-properties)
 - [CSS Preprocessors (e.g., SASS)](#css-preprocessors-eg-sass)
 - [CSS Architecture and Methodologies](#css-architecture-and-methodologies)
 - [CSS Performance and Optimization](#css-performance-and-optimization)
@@ -34,7 +43,7 @@
 
 **Q1. What is CSS, and why is it used in web development?**
 
-CSS (Cascading Style Sheets) is a stylesheet language used to describe the presentation and layout of web documents written in HTML or XML. It is used in web development to control the visual appearance of web content, including aspects like colors, fonts, spacing, and layout. CSS separates the content (HTML) from its presentation, making websites more flexible and maintainable.
+CSS (Cascading Style Sheets) is a stylesheet language used to describe the presentation and layout of web documents written in HTML or XML. It separates content from presentation, controlling colors, fonts, spacing, layout, animations, and more. In 2026, CSS has evolved into a powerful, near-programmatic layer with native nesting, cascade layers, container queries, and scroll-driven animations — reducing the need for JavaScript in many visual scenarios.
 
 ### CSS Selectors
 
@@ -43,68 +52,72 @@ CSS (Cascading Style Sheets) is a stylesheet language used to describe the prese
 CSS selectors are patterns used to select and style HTML elements. The main types are:
 
 - **Element Selector:** Selects all instances of a specified HTML element.
-
 ```css
-p {
-  color: blue;
-}
+p { color: blue; }
 ```
 
 - **Class Selector:** Selects elements with a specific class attribute.
-
 ```css
-.highlight {
-  background-color: yellow;
-}
+.highlight { background-color: yellow; }
 ```
 
 - **ID Selector:** Selects a single element with a specific ID attribute.
-
 ```css
-#header {
-  font-size: 24px;
-}
+#header { font-size: 24px; }
 ```
 
-- **Universal Selector:** Selects all elements on the page.
-
+- **Universal Selector:** Selects all elements.
 ```css
-* {
-  margin: 0;
-  padding: 0;
-}
+* { margin: 0; padding: 0; }
 ```
 
 - **Attribute Selector:** Selects elements with a specific attribute.
-
 ```css
-input[type="text"] {
-  border: 1px solid #ccc;
-}
+input[type="text"] { border: 1px solid #ccc; }
 ```
 
-**Q3. Explain the concept of CSS specificity and how it affects style application.**
+- **`:is()` and `:where()` Selectors (modern):** Group selectors without repeating. `:is()` carries the specificity of its most specific argument; `:where()` has zero specificity.
+```css
+:is(h1, h2, h3) { line-height: 1.2; }
+:where(header, footer) a { text-decoration: none; }
+```
 
-CSS specificity determines which style rules take precedence when multiple rules target the same element. It is calculated based on the combination of selectors and their importance. Specificity can be represented as a four-part value: `a, b, c, d`, where higher values win over lower ones. For example, an ID selector (`#myElement`) has higher specificity than a class selector (`.myClass`).
+- **`:has()` Relational Selector (2026 widely supported):** Selects a parent based on its children — the long-awaited "parent selector."
+```css
+/* Style a card if it contains an image */
+.card:has(img) { padding: 0; }
+/* Style a label whose following input is required */
+label:has(+ input:required)::after { content: " *"; color: red; }
+```
+
+**Q3. Explain CSS specificity and how it affects style application.**
+
+CSS specificity determines which rule takes precedence when multiple rules target the same element. It is calculated as a three-part tuple `(A, B, C)`:
+
+- **A** — ID selectors (e.g., `#id`)
+- **B** — Class, attribute, and pseudo-class selectors (e.g., `.class`, `[attr]`, `:hover`)
+- **C** — Type and pseudo-element selectors (e.g., `div`, `::before`)
+
+Higher values win at each position from left to right. In 2026, **cascade layers** (`@layer`) add a new priority axis above specificity, allowing you to explicitly control which layer's rules win regardless of specificity.
 
 ### CSS Box Model
 
 **Q4. Describe the CSS box model and its components.**
 
-The CSS box model defines how elements are rendered as rectangular boxes. It consists of four main components:
+The box model defines how elements are rendered as rectangular boxes with four areas:
 
-- **Content:** The actual content (e.g., text or images) inside the box.
-- **Padding:** The space between the content and the box's border.
-- **Border:** The border surrounding the padding.
-- **Margin:** The space between the border and adjacent elements.
+- **Content** — The actual text or image content.
+- **Padding** — Space between content and border.
+- **Border** — The border surrounding the padding.
+- **Margin** — Space between the border and adjacent elements.
 
 **Q5. How do you change the box-sizing behavior in CSS?**
 
-You can change the `box-sizing` property to control how an element's total width and height are calculated. The two common values are `content-box` (default) and `border-box`. `border-box` includes padding and border within the specified width and height, making it useful for responsive designs.
+Use the `box-sizing` property. `border-box` is now the recommended default in almost all modern CSS resets, as it includes padding and border in the element's stated width/height:
 
 ```css
-.box {
-  box-sizing: border-box; /* Include padding and border in the total width/height */
+*, *::before, *::after {
+  box-sizing: border-box;
 }
 ```
 
@@ -112,45 +125,38 @@ You can change the `box-sizing` property to control how an element's total width
 
 **Q6. Explain the difference between `display: block`, `display: inline`, and `display: inline-block`.**
 
-- **`display: block`:** Turns an element into a block-level element, causing it to take up the full width available and start on a new line.
+- **`display: block`** — Takes full available width, starts on a new line.
+- **`display: inline`** — Takes only necessary width, flows with text.
+- **`display: inline-block`** — Flows inline but respects width/height.
 
-```css
-.block-element {
-  display: block;
-}
-```
-
-- **`display: inline`:** Makes an element an inline-level element, taking up only as much width as necessary and not starting on a new line.
-
-```css
-.inline-element {
-  display: inline;
-}
-```
-
-- **`display: inline-block`:** Combines features of both block and inline elements. It allows elements to have a width and height while remaining in-line with surrounding elements.
-
-```css
-.inline-block-element {
-  display: inline-block;
-}
-```
+In 2026, also note:
+- **`display: contents`** — Removes the box itself but keeps children in the flow (useful for semantic wrappers in flex/grid).
+- **`display: grid` / `display: flex`** — Now the dominant layout tools for most UI patterns.
 
 **Q7. How do you horizontally center an element using CSS?**
 
-To center an element horizontally, you can use `margin: 0 auto;` on a block-level element.
-
+Multiple approaches depending on context:
 ```css
-.center-horizontally {
-  margin: 0 auto; /* Horizontally center the element */
-}
+/* Block element with known or auto width */
+.center { margin: 0 auto; }
+
+/* Flex container */
+.parent { display: flex; justify-content: center; }
+
+/* Grid container */
+.parent { display: grid; place-items: center; }
 ```
 
-**Q8. How do you center an element both horizontally and vertically using CSS?**
-
-You can use the following CSS to center an element both horizontally and vertically:
+**Q8. How do you center an element both horizontally and vertically?**
 
 ```css
+/* Modern approach — preferred */
+.parent {
+  display: grid;
+  place-items: center;
+}
+
+/* Absolute positioning fallback */
 .center-both {
   position: absolute;
   top: 50%;
@@ -159,81 +165,79 @@ You can use the following CSS to center an element both horizontally and vertica
 }
 ```
 
-**Q9. Explain the differences between `position: relative`, `position: absolute`, and `position: fixed`.**
+**Q9. Explain the differences between `position: relative`, `position: absolute`, `position: fixed`, and `position: sticky`.**
 
-- **`position: relative`:** Positions an element relative to its normal position in the document flow. It can be moved using the `top`, `right`, `bottom`, and `left` properties.
-
-- **`position: absolute`:** Positions an element relative to its nearest positioned ancestor (or the viewport if none). It's removed from the normal document flow.
-
-- **`position: fixed`:** Positions an element relative to the viewport. It stays in the same position even when the page is scrolled.
+- **`relative`** — Positioned relative to its normal flow position; still occupies space.
+- **`absolute`** — Removed from flow; positioned relative to nearest positioned ancestor.
+- **`fixed`** — Positioned relative to the viewport; unaffected by scroll.
+- **`sticky`** — Hybrid: behaves as `relative` until a scroll threshold is crossed, then acts as `fixed` within its container. Widely used for sticky headers and sidebars.
 
 ### Responsive Design and Media Queries
 
 **Q10. How do you create a responsive design in CSS?**
 
-A responsive design can be achieved by using media queries and flexible layouts. Media queries allow you to apply different CSS rules based on the screen size or device characteristics. For example:
+Use a combination of fluid layouts, media queries, and container queries. Modern responsive design favors intrinsic sizing (`min()`, `max()`, `clamp()`) and container queries over fixed breakpoints:
 
 ```css
+/* Fluid typography with clamp */
+h1 {
+  font-size: clamp(1.5rem, 4vw + 1rem, 3rem);
+}
+
+/* Media query for viewport-level layout */
 @media (max-width: 768px) {
-  /* Styles for screens smaller than 768px */
-  .sidebar {
-    display: none; /* Hide the sidebar on smaller screens */
-  }
+  .sidebar { display: none; }
 }
 ```
 
-**Q11. Explain the purpose of the CSS `@media` rule.**
+**Q11. What are media queries, and how are they used for responsive design?**
 
-The `@media` rule is used to apply different styles based on the characteristics of the user's device, such as screen width, height, or orientation. It is a key component of responsive design and allows you to create styles specific to different screen sizes or devices.
-
-**Q12. What are media queries in CSS, and how are they used for responsive design?**
-
-Media queries are CSS rules that apply different styles based on the characteristics of the device or viewport. They are commonly used for responsive design to adapt layouts and styles to different screen sizes and orientations.
-
-Example:
+Media queries apply styles based on device/viewport characteristics such as width, height, orientation, color scheme, or display mode:
 
 ```css
 @media (max-width: 600px) {
-  /* Styles for screens smaller than 600px */
-  .menu {
-    display: none; /* Hide the menu on small screens */
-  }
+  .menu { display: none; }
+}
+
+/* Prefer dark mode */
+@media (prefers-color-scheme: dark) {
+  body { background: #111; color: #eee; }
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.01ms !important; }
 }
 ```
+
+**Q12. What is the difference between `min-width` and `max-width` in media queries?**
+
+- **`min-width`** — Mobile-first approach; styles apply at or above the specified width.
+- **`max-width`** — Desktop-first approach; styles apply at or below the specified width.
+
+Mobile-first (`min-width`) is generally recommended as it tends to produce leaner base styles.
 
 ### CSS Variables (Custom Properties)
 
 **Q13. What are CSS variables, and why are they useful?**
 
-CSS variables, also known as custom properties, are user-defined variables in CSS that hold values and can be reused throughout a stylesheet. They are useful for maintaining consistency, making global changes, and creating more maintainable and adaptable stylesheets.
-
-Example:
+CSS custom properties (variables) are user-defined values prefixed with `--` that cascade and inherit like any CSS property. In 2026, they are central to design tokens, theming, and component-level customization. They can be read and written from JavaScript at runtime.
 
 ```css
 :root {
-  --primary-color: #3498db;
+  --color-primary: oklch(55% 0.2 250);
+  --spacing-md: 1rem;
 }
 
 .button {
-  background-color: var(--primary-color);
+  background-color: var(--color-primary);
+  padding: var(--spacing-md);
 }
 ```
 
-In this example, `--primary-color` is a CSS variable holding the primary color value, which can be reused across the stylesheet.
+**Q14. How do CSS variables differ from SASS/LESS variables?**
 
-**Q14. How do you define and use CSS variables (custom properties)?**
-
-CSS variables are defined using the `--` prefix within a CSS selector. They can be used by referencing the variable name with the `var()` function.
-
-```css
-:root {
-  --primary-color: #3498db;
-}
-
-.button {
-  background-color: var(--primary-color);
-}
-```
+CSS custom properties are **live** — they cascade, inherit, can be scoped to elements, and can be changed at runtime via JavaScript or `@media`/`@container` rules. SASS/LESS variables are **static** — they are resolved at compile time and produce no dynamic behavior in the browser.
 
 ---
 
@@ -241,41 +245,76 @@ CSS variables are defined using the `--` prefix within a CSS selector. They can 
 
 ### CSS Flexbox
 
-**Q15. Explain the purpose of CSS Flexbox and when to use it.**
+**Q15. Explain CSS Flexbox and when to use it.**
 
-CSS Flexbox (Flexible Box Layout) is a layout model that makes it easier to design complex layouts with a dynamic and flexible structure. It's ideal for arranging items within a container, especially when the size of your items is unknown or dynamic.
+Flexbox is a one-dimensional layout model for distributing space along a single axis (row or column). Use it for navigation bars, toolbars, card rows, centering content, and any layout where items need to flex around a single axis.
 
-**Q16. How do you create a horizontal center alignment of flex items within a flex container?**
-
-To horizontally center align flex items within a flex container, you can set the `justify-content` property of the container to `center`.
+**Q16. How do you horizontally center flex items?**
 
 ```css
 .container {
   display: flex;
-  justify-content: center; /* Horizontally center-align flex items */
+  justify-content: center; /* Main axis */
+  align-items: center;     /* Cross axis */
+}
+```
+
+**Q17. What is the `gap` property in Flexbox/Grid?**
+
+`gap` (formerly `grid-gap`) adds spacing between flex or grid items without needing margins. It works on both flex containers and grid containers:
+
+```css
+.flex-container {
+  display: flex;
+  gap: 1rem;         /* Same gap on both axes */
+  gap: 1rem 2rem;    /* Row gap, column gap */
 }
 ```
 
 ### CSS Grid Layout
 
-**Q17. What is CSS Grid Layout, and how does it differ from Flexbox?**
+**Q18. What is CSS Grid, and how does it differ from Flexbox?**
 
-CSS Grid Layout is a two-dimensional layout system used to create grid-based layouts in web applications. It differs from Flexbox, which is a one-dimensional layout system. Grid is ideal for arranging items in both rows and columns, while Flexbox is best for one-dimensional arrangements.
+CSS Grid is a two-dimensional layout system for placing items in both rows and columns simultaneously. Use Grid for page-level layouts, card grids, and any layout requiring alignment on two axes. Use Flexbox for one-dimensional alignment within components.
 
-**Q18. How do you create a grid layout with CSS Grid?**
-
-To create a grid layout with CSS Grid, you first define a grid container using `display: grid;`. You then specify the number of rows and columns using properties like `grid-template-rows` and `grid-template-columns`. Finally, you place items within the grid using `grid-row` and `grid-column` properties.
+**Q19. How do you create a grid layout?**
 
 ```css
 .grid-container {
   display: grid;
-  grid-template-rows: repeat(3, 1fr); /* 3 rows of equal height */
-  grid-template-columns: 1fr 2fr; /* 1 column 1/3 of the width, 1 column 2/3 of the width */
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5rem;
 }
 
-.grid-item {
-  grid-row: 2 / 3; /* Item spans from row 2 to row 3 */
-  grid-column: 1 / 3; /* Item spans from column 1 to column 3 */
+/* Named template areas */
+.page {
+  display: grid;
+  grid-template-areas:
+    "header header"
+    "sidebar main"
+    "footer footer";
+  grid-template-columns: 240px 1fr;
+}
+
+.header { grid-area: header; }
+.sidebar { grid-area: sidebar; }
+```
+
+**Q20. What is `subgrid`, and when would you use it?**
+
+`subgrid` (now broadly supported) allows a nested grid element to participate in the tracks of its parent grid, solving longstanding alignment problems in card layouts:
+
+```css
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: auto 1fr auto;
+}
+
+.card {
+  display: grid;
+  grid-row: span 3;
+  grid-template-rows: subgrid; /* Aligns heading, body, footer across cards */
 }
 ```
 
@@ -285,108 +324,335 @@ To create a grid layout with CSS Grid, you first define a grid container using `
 
 ### CSS Transitions and Animations
 
-**Q19. Explain the CSS `transition` property and how it can be used to create smooth animations.**
-
-The `transition` property is used to create smooth transitions or animations when a CSS property changes its value. It defines the timing function, duration, and other parameters of the transition.
-
-Example:
+**Q21. Explain the CSS `transition` property.**
 
 ```css
 .button {
   background-color: blue;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
-
 .button:hover {
   background-color: red;
+  transform: scale(1.05);
 }
 ```
 
-In this example, when you hover over the `.button` element, the background color will smoothly transition from blue to red over 0.3 seconds with an ease timing function.
+`transition` smoothly interpolates between two states triggered by a state change (hover, focus, class toggle).
 
-**Q20. What is the CSS `rem` unit, and how does it differ from `em` and `px` units?**
+**Q22. What are CSS `@keyframes` animations?**
 
-The `rem` unit in CSS stands for "root em" and is relative to the font size of the root element (usually the `<html>` element). Unlike `em`, which is relative to the font size of the parent element, `rem` provides a consistent reference point. `px` is an absolute unit.
-
-Example:
+`@keyframes` define multi-step animations independent of state changes:
 
 ```css
-body {
-  font-size: 16px; /* 1rem is equal to 16px */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-.box {
-  font-size: 1.5rem; /* 1.5 times the root font size (24px) */
-  margin: 1rem; /* 1 times the root font size (16px) */
+.card {
+  animation: fadeInUp 0.4s ease forwards;
 }
 ```
 
-**Q21. What is the "box-sizing" property in CSS, and how does it affect element sizing?**
+**Q23. What is the `rem` unit, and how does it differ from `em`, `px`, and newer units?**
 
-The `box-sizing` property in CSS determines how an element's total width and height are calculated. It can have two values: `content-box` (default) and `border-box`. `border-box` includes padding and border within the specified width and height.
-
-Example:
+- **`px`** — Absolute unit. Fixed size regardless of context.
+- **`em`** — Relative to the element's own font size (or parent's if used for font-size).
+- **`rem`** — Relative to the root (`<html>`) font size. Consistent reference throughout.
+- **`dvh` / `dvw` / `svh` / `lvh`** (2024–2026) — Dynamic/small/large viewport units that account for mobile browser chrome (address bar resizing). Prefer `dvh` over `vh` for full-height layouts on mobile.
 
 ```css
-.box {
-  width: 100px;
-  height: 100px;
-  padding: 10px;
-  border: 2px solid #3498db;
-  box-sizing: border-box; /* Include padding and border in the total width and height */
+.hero {
+  min-height: 100dvh; /* Correct on mobile, unlike 100vh */
 }
 ```
 
 ### CSS Pseudo-Classes and Pseudo-Elements
 
-**Q22. What is the CSS `:not()` pseudo-class, and how can it be used to select elements?**
-
-The `:not()` pseudo-class in CSS is used to select elements that do not match a specific selector. It allows you to exclude certain elements from being styled.
-
-Example:
+**Q24. What is the `:not()` pseudo-class?**
 
 ```css
-/* Select all paragraphs except those with the class "excluded" */
-p:not(.excluded) {
-  font-size: 16px;
-}
+p:not(.excluded) { font-size: 16px; }
 ```
 
-In this example, all paragraphs except those with the class `.excluded` will have a font size of 16 pixels.
+In modern CSS, `:not()` accepts complex selectors and a selector list:
+```css
+a:not([href^="http"]):not([href^="mailto"]) { /* internal links only */ }
+```
 
-**Q23. Explain the CSS `::before` and `::after` pseudo-elements.**
+**Q25. Explain `::before` and `::after` pseudo-elements.**
 
-The `::before` and `::after` pseudo-elements in CSS allow you to insert content before and after the content of an element, respectively. They are often used for decorative elements and can be styled using CSS properties.
+They insert generated content before/after an element's content, often used for decorative elements, icons, or clearfix patterns.
 
-Example:
+**Q26. What are some newer pseudo-classes relevant in 2026?**
+
+- **`:has()`** — Parent selector; style an ancestor based on a descendant match.
+- **`:is()`** — Forgiving selector list with specificity of the most specific argument.
+- **`:where()`** — Same as `:is()` but with zero specificity.
+- **`:focus-visible`** — Applies focus styles only when the browser determines keyboard/programmatic focus (not mouse click), improving accessibility without removing visible focus outlines.
+- **`:popover-open`** — Styles elements currently shown via the Popover API.
 
 ```css
-.quote::before {
-  content: "“"; /* Insert a left double quotation mark before the content */
-  color: #999;
-}
-
-.quote::after {
-  content: "”"; /* Insert a right double quotation mark after the content */
-  color: #999;
-
-
+button:focus-visible {
+  outline: 3px solid royalblue;
+  outline-offset: 2px;
 }
 ```
 
 ---
 
+## CSS Cascade Layers
+
+**Q27. What are CSS cascade layers (`@layer`), and why are they important?**
+
+Cascade layers, introduced in CSS and now broadly supported, let you explicitly define a priority order for groups of styles. Layers trump specificity — a rule in a higher-priority layer wins over a more specific selector in a lower-priority layer.
+
+```css
+@layer reset, base, components, utilities;
+
+@layer reset {
+  * { margin: 0; padding: 0; }
+}
+
+@layer components {
+  .button { padding: 0.5rem 1rem; background: blue; }
+}
+
+@layer utilities {
+  .bg-red { background: red; } /* Wins over .button in components */
+}
+```
+
+This solves specificity wars at scale and is a core pattern in modern CSS architecture, superseding some use cases for `!important`.
+
+---
+
+## CSS Nesting
+
+**Q28. What is native CSS nesting, and how does it work?**
+
+As of 2024–2026, CSS nesting is natively supported in all major browsers without a preprocessor. It allows you to write nested rules directly in CSS:
+
+```css
+.card {
+  padding: 1rem;
+  background: white;
+
+  & h2 {
+    font-size: 1.25rem;
+    color: #333;
+  }
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+
+  @media (max-width: 600px) {
+    padding: 0.5rem;
+  }
+}
+```
+
+The `&` refers to the parent selector. This reduces repetition and improves readability without requiring SASS or PostCSS.
+
+---
+
+## CSS Container Queries
+
+**Q29. What are container queries, and how do they differ from media queries?**
+
+Container queries allow elements to apply styles based on the size of their **containing element** (rather than the viewport). This enables truly reusable, context-aware components:
+
+```css
+.card-wrapper {
+  container-type: inline-size;
+  container-name: card;
+}
+
+@container card (min-width: 400px) {
+  .card {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+  }
+}
+```
+
+**When to use which:**
+- Use **media queries** for page-level layout decisions (viewport size).
+- Use **container queries** for component-level layout decisions (component size within its context).
+
+**Q30. What are container style queries?**
+
+Beyond size, you can also query custom property values on a container:
+
+```css
+@container style(--theme: dark) {
+  .card { background: #1a1a1a; color: white; }
+}
+```
+
+---
+
+## CSS Scope
+
+**Q31. What is `@scope` in CSS?**
+
+`@scope` lets you limit where styles apply, preventing leakage into unintended subtrees. It allows scoping without relying on specificity tricks or BEM:
+
+```css
+@scope (.card) to (.card-footer) {
+  p { font-size: 0.9rem; color: #555; } /* Only p elements inside .card but not inside .card-footer */
+}
+```
+
+This is particularly useful in design systems and component libraries.
+
+---
+
+## CSS Logical Properties
+
+**Q32. What are CSS logical properties, and why should you use them?**
+
+Logical properties replace physical directional values (`left`, `right`, `top`, `bottom`) with flow-relative equivalents, making layouts internationalization-friendly by automatically adapting to RTL (right-to-left) languages:
+
+```css
+/* Physical (avoid for i18n) */
+.box { margin-left: 1rem; border-right: 1px solid; }
+
+/* Logical (preferred) */
+.box { margin-inline-start: 1rem; border-inline-end: 1px solid; }
+```
+
+Key logical property pairs:
+- `margin-inline` → left/right margins (in LTR)
+- `padding-block` → top/bottom padding
+- `inset-inline-start` → `left` in LTR, `right` in RTL
+- `border-block-end` → bottom border in horizontal writing modes
+
+---
+
+## CSS Color Functions and Spaces
+
+**Q33. What new color features exist in CSS in 2025–2026?**
+
+CSS now supports modern color spaces and functions that provide wider gamuts, perceptually uniform gradients, and more predictable color manipulation:
+
+- **`oklch()`** — Perceptually uniform lightness-chroma-hue; excellent for accessible color systems and smooth gradients.
+- **`oklab()`** — Perceptually uniform lab space for smooth color interpolation.
+- **`color-mix()`** — Mix two colors in a specified color space.
+- **`light-dark()`** — Shorthand for providing light and dark mode color values.
+- **`color(display-p3 ...)`** — Access wide-gamut P3 color space for vivid colors on supporting displays.
+
+```css
+:root {
+  --brand: oklch(60% 0.2 250);
+  --brand-light: oklch(80% 0.15 250);
+}
+
+.badge {
+  background: color-mix(in oklch, var(--brand) 20%, white);
+  color: light-dark(#111, #eee);
+}
+```
+
+---
+
+## CSS Scroll-Driven Animations
+
+**Q34. What are scroll-driven animations in CSS?**
+
+Scroll-driven animations (broadly supported since 2024) allow CSS animations to be driven by scroll progress rather than time, entirely in CSS with no JavaScript:
+
+```css
+@keyframes reveal {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.section {
+  animation: reveal linear both;
+  animation-timeline: view();         /* Tied to element's visibility in viewport */
+  animation-range: entry 0% entry 40%;
+}
+
+/* Progress bar tied to page scroll */
+.progress-bar {
+  animation: grow-width linear;
+  animation-timeline: scroll(root);   /* Tied to root scroll position */
+}
+
+@keyframes grow-width {
+  from { width: 0%; }
+  to   { width: 100%; }
+}
+```
+
+---
+
+## View Transitions API
+
+**Q35. What is the View Transitions API and how is it used in CSS?**
+
+The View Transitions API enables animated transitions between DOM states (single-page) or between page navigations (multi-page, with `@view-transition`). The browser captures before/after snapshots and animates between them:
+
+```css
+/* Default cross-fade is automatic; customize with pseudo-elements */
+::view-transition-old(root) {
+  animation: slide-out 0.3s ease forwards;
+}
+::view-transition-new(root) {
+  animation: slide-in 0.3s ease forwards;
+}
+
+/* Named transitions on specific elements */
+.hero-image {
+  view-transition-name: hero;
+}
+```
+
+For multi-page apps, opt in with:
+```css
+@view-transition {
+  navigation: auto;
+}
+```
+
+---
+
+## CSS Houdini and Custom Properties
+
+**Q36. What is CSS Houdini, and what is `@property`?**
+
+CSS Houdini exposes CSS engine internals to JavaScript, enabling low-level styling APIs. Most practically today, `@property` registers typed custom properties with animation support:
+
+```css
+@property --gradient-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.rotating-gradient {
+  background: conic-gradient(from var(--gradient-angle), royalblue, hotpink, royalblue);
+  animation: rotate 4s linear infinite;
+}
+
+@keyframes rotate {
+  to { --gradient-angle: 360deg; }
+}
+```
+
+Without `@property`, custom properties in `@keyframes` would not animate. `@property` also adds type checking and fallback values to custom properties.
+
+---
+
 ## CSS Preprocessors (e.g., SASS)
 
-**Q24. What is a CSS preprocessor, and why would you use one like SASS?**
+**Q37. What is a CSS preprocessor, and is SASS still relevant in 2026?**
 
-A CSS preprocessor is a scripting language that extends the capabilities of CSS, allowing you to use variables, functions, nesting, and more. SASS is one such preprocessor. Preprocessors make CSS code more maintainable and allow for the reuse of code and styles.
+CSS preprocessors like SASS extend CSS with variables, functions, mixins, and nesting. In 2026, with native CSS nesting, custom properties, and `@layer`, many SASS features are now available natively. However, SASS/SCSS remains useful for compile-time logic, complex mixins, loops, and large codebases with build pipelines.
 
-**Q25. How do you define a variable in SASS, and what are its benefits?**
-
-In SASS, you can define a variable using the `$` symbol. Variables in SASS allow you to store and reuse values, making it easier to maintain consistent styles throughout your stylesheet.
-
-Example:
+**Q38. How do you define a variable in SASS?**
 
 ```scss
 $primary-color: #3498db;
@@ -396,174 +662,263 @@ $primary-color: #3498db;
 }
 ```
 
-In this example, `$primary-color` is a SASS variable holding the primary color value.
+In modern CSS-first projects, prefer CSS custom properties for runtime flexibility and SASS `$variables` only for compile-time constants.
 
 ---
 
 ## CSS Architecture and Methodologies
 
-**Q26. What is the BEM (Block, Element, Modifier) methodology in CSS, and how does it work?**
+**Q39. What is the BEM methodology?**
 
-BEM is a CSS methodology that aims to create more maintainable and scalable CSS code by providing a naming convention for classes. It divides styles into blocks, elements, and modifiers. Blocks are standalone components, elements are parts of blocks, and modifiers change the appearance or behavior of blocks or elements.
-
-Example:
+BEM (Block, Element, Modifier) provides a naming convention: blocks are standalone components, elements are parts of blocks (`.block__element`), and modifiers change appearance (`.block--modifier`). It avoids specificity conflicts by keeping all selectors at single-class depth.
 
 ```html
-<div class="button">
-  Button
-  <span class="button__icon button__icon--right"></span>
+<div class="button button--primary">
+  <span class="button__icon button__icon--left"></span>
+  Submit
 </div>
 ```
 
-In this example, `button` is a block, `button__icon` is an element, and `button__icon--right` is a modifier.
+**Q40. How do cascade layers change CSS architecture?**
 
-**Q27. Explain the concept of "CSS specificity wars" and how to avoid them.**
+Cascade layers (`@layer`) allow architecting CSS in explicit priority tiers, reducing the need for BEM's specificity-avoidance strategy. A typical layered architecture:
 
-CSS specificity wars occur when styles with high specificity override styles with lower specificity, leading to unexpected results. To avoid these conflicts, use CSS selectors with appropriate specificity and avoid using overly specific selectors. You can also use BEM or other naming conventions to keep specificity in check.
+```css
+@layer reset, tokens, base, components, variants, utilities, overrides;
+```
+
+Rules in later-declared layers always win over earlier layers, regardless of specificity. This aligns with utility-first frameworks like Tailwind and integrates well with design token systems.
+
+**Q41. What is the utility-first CSS methodology?**
+
+Utility-first CSS (popularized by Tailwind CSS) composes styles entirely from single-purpose utility classes rather than semantic component classes. It avoids CSS file growth by reusing classes across the HTML. Tailwind v4 (2025) rebuilds around a CSS-native architecture using cascade layers and `@property`.
 
 ---
 
 ## CSS Performance and Optimization
 
-**Q28. What are some techniques for optimizing the performance of CSS on a website?**
+**Q42. What are techniques for optimizing CSS performance?**
 
-Optimizing CSS performance involves minimizing file size and reducing rendering times. Techniques include:
-
-- **Minification:** Remove whitespace and comments from CSS files.
-- **Concatenation:** Combine multiple CSS files into one to reduce HTTP requests.
-- **Responsive Images:** Use responsive images and specify image dimensions.
-- **CSS Sprites:** Combine small images into a single sprite sheet to reduce requests.
-- **Critical CSS:** Load critical styles inline and defer non-critical styles.
-- **Lazy Loading:** Lazy load CSS for off-screen elements.
-- **Reducing Redundancy:** Avoid redundant styles and use shorthand properties.
-
-**Q29. What is the purpose of CSS vendor prefixes, and how are they used?**
-
-CSS vendor prefixes are used to add browser-specific prefixes to CSS properties to ensure compatibility with different browsers during periods of CSS property standardization. These prefixes are used for experimental or non-standard features. Common prefixes include `-webkit-` (for WebKit-based browsers), `-moz-` (for Mozilla Firefox), and `-ms-` (for Microsoft browsers).
-
-Example:
+- **Minification and concatenation** — Reduce file size and HTTP requests.
+- **Critical CSS** — Inline above-the-fold styles; defer the rest.
+- **`content-visibility: auto`** — Skips rendering of off-screen content sections, dramatically improving initial load time on long pages.
+- **`will-change`** — Hints to the browser to promote an element to its own compositor layer (use sparingly).
+- **Avoiding layout thrashing** — Keep animations on `transform` and `opacity` (compositor-only properties) rather than properties that trigger layout (width, height, top, left).
+- **CSS `@layer`** — Reduces specificity wars that lead to bloated overrides.
+- **Reducing redundancy** — Use shorthand properties and design tokens.
 
 ```css
-/* Adding a gradient with vendor prefixes */
-.gradient {
-  background: -webkit-linear-gradient(top, #3498db, #2980b9);
-  background: -moz-linear-gradient(top, #3498db, #2980b9);
-  background: -ms-linear-gradient(top, #3498db, #2980b9);
-  background: linear-gradient(to bottom, #3498db, #2980b9);
+.lazy-section {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 500px; /* Estimated height to prevent layout shifts */
 }
 ```
+
+**Q43. What are CSS vendor prefixes and are they still needed?**
+
+Vendor prefixes (`-webkit-`, `-moz-`, `-ms-`) were used for experimental properties. In 2026, most stable CSS properties no longer require them. Autoprefixer (a PostCSS plugin) handles any remaining cases automatically in build pipelines. Very few new features require manual prefixing.
 
 ---
 
 ## CSS Frameworks and Libraries
 
-**Q30. What are CSS frameworks, and why might you choose to use one?**
+**Q44. What are popular CSS frameworks in 2026?**
 
-CSS frameworks are pre-built collections of CSS files, components, and styles that help streamline the process of web development. They provide a consistent and responsive foundation for building websites and web applications. Developers often choose to use CSS frameworks to save time and ensure a consistent design.
-
-**Q31. Name a few popular CSS frameworks and describe their primary use cases.**
-
-- **Bootstrap:** A widely used CSS framework that offers a responsive grid system and a collection of UI components.
-- **Foundation:** A responsive front-end framework that provides a flexible grid system and various UI components.
-- **Bulma:** A modern CSS framework based on Flexbox, known for its simplicity and ease of use.
-- **Semantic UI:** A framework with a focus on human-friendly HTML and a variety of UI elements.
+- **Tailwind CSS v4** — Utility-first; rebuilt with a CSS-native engine (no config file, uses CSS `@import`). Industry-leading adoption.
+- **Bootstrap 5** — Component-based; still widely used in enterprise/CMS contexts.
+- **Open Props** — CSS custom property primitives for design tokens, not a framework per se.
+- **PandaCSS** — Type-safe CSS-in-JS generating static CSS.
+- **Vanilla Extract** — TypeScript-first zero-runtime CSS-in-JS.
+- **UnoCSS** — Atomic CSS engine with high flexibility and performance.
 
 ---
 
 ## CSS and Accessibility
 
-**Q32. Why is it important to consider accessibility when writing CSS for a website?**
+**Q45. Why is accessibility important in CSS?**
 
-Accessibility ensures that web content is usable by as many people as possible, including those with disabilities. CSS plays a crucial role in accessibility by controlling the visual presentation of web content. Properly structured and styled CSS can improve readability, navigation, and usability for all users.
+CSS directly controls visual presentation — contrast, focus styles, motion, and layout. Poor CSS choices can make content unreadable or unusable for people with visual, motor, or vestibular disabilities.
 
-**Q33. What are some best practices for creating accessible CSS?**
+**Q46. What are CSS best practices for accessibility?**
 
-To create accessible CSS, follow these best practices:
+- Ensure WCAG AA contrast ratios (4.5:1 for body text, 3:1 for large text). Use `oklch()` for accessible color math.
+- Never remove `:focus-visible` outlines without providing a clear replacement.
+- Use `@media (prefers-reduced-motion: reduce)` to disable or reduce animations.
+- Use `@media (prefers-contrast: more)` for high contrast mode adjustments.
+- Avoid `display: none` for visually hidden content that should remain accessible — use the `.sr-only` pattern instead.
+- Use logical properties for RTL support.
 
-- Ensure proper contrast between text and background colors.
-- Use semantic HTML elements for content structure.
-- Provide clear and consistent navigation styles.
-- Use proper heading hierarchy.
-- Avoid relying solely on color to convey information.
-- Test your website with screen readers and other assistive technologies.
+```css
+/* Accessible visually-hidden utility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+```
 
 ---
 
 ## CSS Troubleshooting and Debugging
 
-**Q34. How do you troubleshoot CSS issues in a web project?**
+**Q47. How do you troubleshoot CSS issues?**
 
-To troubleshoot CSS issues, you can:
+- Use browser DevTools (Chrome, Firefox, Safari) to inspect the cascade, computed styles, and the **Layers** panel.
+- Chrome DevTools now includes a **CSS Overview** panel for auditing color contrast, font usage, and unused styles.
+- Use `outline: 1px solid red` to debug layout/spacing issues.
+- Check for cascade layer ordering issues with the new Styles panel layer view.
+- Use `@supports` to detect feature support and provide fallbacks.
 
-- Use browser developer tools to inspect and modify styles.
-- Check the browser's console for CSS errors.
-- Review your CSS code for typos and logical errors.
-- Validate your HTML and CSS code using online tools.
-- Isolate the issue by temporarily removing or commenting out CSS rules.
+**Q48. What are common CSS pitfalls in 2026?**
 
-**Q35. What are some common CSS bugs or issues, and how do you fix them?**
-
-Common CSS issues include:
-
-- **Layout issues:** Use developer tools to inspect the layout and check for conflicting styles.
-- **Z-index issues:** Ensure elements with higher z-index values appear on top.
-- **Cross-browser compatibility:** Use vendor prefixes and test on multiple browsers.
-- **Specificity conflicts:** Use more specific selectors or restructure your CSS.
+- Forgetting `content-visibility` and `contain-intrinsic-size` together (omitting the latter causes layout shift).
+- Using `100vh` instead of `100dvh` on mobile, causing content to be hidden behind the browser bar.
+- Animating non-compositor properties (`width`, `margin`) instead of `transform`/`opacity`.
+- Using `@layer` without declaring the layer order upfront, leading to unpredictable cascade behavior.
+- Missing `view-transition-name` uniqueness (duplicate names break view transitions).
 
 ---
 
 ## CSS Best Practices
 
-**Q36. What are some general best practices for writing clean and maintainable CSS code?**
+**Q49. What are general best practices for writing clean, maintainable CSS in 2026?**
 
-- Use meaningful class and ID names.
-- Group related styles together in your CSS files.
-- Minimize the use of `!important` and inline styles.
-- Comment your code to explain complex or non-obvious styles.
-- Avoid unnecessary nesting and specificity.
-- Follow a consistent coding style and indentation.
+- Use design tokens via CSS custom properties at `:root` for consistent theming.
+- Organize with `@layer` to avoid specificity wars.
+- Prefer native CSS nesting over SASS nesting for browser-native performance.
+- Use `clamp()`, `min()`, `max()` for fluid, responsive values.
+- Write mobile-first using `min-width` media queries.
+- Use logical properties for internationalization.
+- Minimize `!important` — use cascade layers instead.
+- Keep selectors shallow; avoid nesting more than 3 levels deep.
+- Document complex calculations and magic numbers with comments.
 
 ---
 
 ## CSS Cross-Browser Compatibility
 
-**Q37. What are some strategies for achieving cross-browser compatibility in CSS?**
+**Q50. How do you achieve cross-browser compatibility in CSS?**
 
-- Use CSS vendor prefixes for experimental or non-standard features.
-- Test your website on multiple browsers and devices.
-- Use feature detection and progressive enhancement.
-- Consider using CSS reset or normalization styles.
-- Keep your CSS code modular and well-structured to make adjustments easier.
+- Use `@supports` for progressive enhancement of newer features.
+- Use Autoprefixer in your build pipeline for vendor prefixes.
+- Test in Chrome, Firefox, Safari, and their mobile counterparts.
+- Check [caniuse.com](https://caniuse.com) for feature support tables.
+- Provide sensible fallbacks before modern syntax:
+
+```css
+/* Fallback first, then modern enhancement */
+.box {
+  background: #3498db;                          /* Legacy */
+  background: oklch(55% 0.18 250);              /* Modern */
+}
+```
 
 ---
 
 ## Miscellaneous
 
-**Q38. How can you use CSS to create a responsive design that works on both desktop and mobile devices?**
+**Q51. What is the `aspect-ratio` property?**
 
-To create a responsive design, use media queries to adapt your layout and styles based on screen size. Adjust font sizes, spacing, and layout to provide an optimal experience on different devices.
+`aspect-ratio` sets a preferred aspect ratio for an element, eliminating the need for the "padding-top hack" for responsive iframes and images:
 
-**Q39. What is the CSS
+```css
+.video-wrapper {
+  aspect-ratio: 16 / 9;
+  width: 100%;
+}
 
- `display` property, and how does it affect the rendering of elements?**
+img {
+  aspect-ratio: 1;    /* Square */
+  object-fit: cover;
+}
+```
 
-The `display` property in CSS specifies how an element is displayed in the document. It can take various values, such as `block`, `inline`, `inline-block`, `flex`, `grid`, and more, each affecting the element's behavior in terms of layout and positioning.
+**Q52. What is the CSS Popover API and how does CSS interact with it?**
 
-**Q40. How can you load CSS asynchronously or defer its loading for performance optimization?**
+The native Popover API (HTML attribute `popover` + `popovertarget`) allows dismissible overlays without JavaScript state management. CSS controls their appearance:
 
-To load CSS asynchronously or defer its loading, you can use techniques like:
+```css
+[popover] {
+  border: none;
+  border-radius: 0.5rem;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+}
 
-- Adding the `async` attribute to the `<link>` tag when linking external CSS files.
-- Loading critical CSS inline and deferring non-critical styles.
-- Using JavaScript to load CSS dynamically after the page has loaded.
-- Utilizing techniques like `<link rel="preload">` to control when CSS files are fetched.
+[popover]:popover-open {
+  display: flex; /* Overrides the browser default block */
+}
+
+/* Animate popover entry/exit using @starting-style */
+[popover] {
+  transition: opacity 0.2s, display 0.2s allow-discrete;
+  opacity: 0;
+}
+
+[popover]:popover-open {
+  opacity: 1;
+}
+
+@starting-style {
+  [popover]:popover-open {
+    opacity: 0;
+  }
+}
+```
+
+**Q53. What is `@starting-style`?**
+
+`@starting-style` defines the initial style state for an element being added to the DOM or transitioning from `display: none`. This enables entry animations purely in CSS:
+
+```css
+.dialog {
+  transition: opacity 0.3s, transform 0.3s;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@starting-style {
+  .dialog {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+```
+
+**Q54. How do you load CSS efficiently for performance?**
+
+- **Critical CSS inline** — Inline above-the-fold styles in `<style>` to prevent render-blocking.
+- **`<link rel="preload">`** — Hint the browser to fetch CSS early.
+- **`media` attribute** — Load non-critical CSS with a media attribute that doesn't match initially, then change it with JS.
+- **Layered CSS splitting** — Split your CSS by `@layer` and load lower-priority layers asynchronously.
+- **HTTP/2 and HTTP/3** — Multiple CSS files are less costly; remove concatenation if using modern protocols.
 
 ---
 
-## Additional Resources (Books)
+## Additional Resources 📚
 
+### Books
 - [CSS Secrets: Better Solutions to Everyday Web Design Problems](https://www.goodreads.com/en/book/show/18622232-css-secrets)
-- [CSS: The Definitive Guide](https://www.goodreads.com/en/book/show/24296875-css)
-- [Smashing Book 5: Real-Life Responsive Web Design - Part 1](https://www.goodreads.com/en/book/show/28567956-smashing-book-5)
+- [CSS: The Definitive Guide, 5th Edition](https://www.oreilly.com/library/view/css-the-definitive/9781098117603/)
+- [Every Layout](https://every-layout.dev/) — Algorithmic layout design
 
-## Happy Coding :rocket:
+### Websites & References
+- [MDN Web Docs — CSS](https://developer.mozilla.org/en-US/docs/Web/CSS)
+- [web.dev/css](https://web.dev/learn/css/) — Google's structured CSS learning path
+- [caniuse.com](https://caniuse.com) — Browser support tables
+- [CSS Tricks](https://css-tricks.com) — Articles, guides, and the Almanac
+- [Lea Verou's Blog](https://lea.verou.me) — Deep dives into modern CSS
+
+### What to Watch (2026 Horizon)
+- **CSS Functions & Mixins (`@function`)** — Custom reusable CSS functions (in spec development)
+- **Anchor Positioning** — Position popups/tooltips relative to any anchor element without JavaScript
+- **CSS Masonry Layout** — Native masonry (Pinterest-style) as part of CSS Grid
+
+---
+
+## Happy Coding 🚀
