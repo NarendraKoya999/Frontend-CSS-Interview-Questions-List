@@ -23,6 +23,8 @@
 - [CSS Color Functions and Spaces](#css-color-functions-and-spaces)
 - [CSS Scroll-Driven Animations](#css-scroll-driven-animations)
 - [View Transitions API](#view-transitions-api)
+- [CSS Anchor Positioning](#css-anchor-positioning) ✨ New
+- [CSS if() Function](#css-if-function) ✨ New
 - [CSS Houdini and Custom Properties](#css-houdini-and-custom-properties)
 - [CSS Preprocessors (e.g., SASS)](#css-preprocessors-eg-sass)
 - [CSS Architecture and Methodologies](#css-architecture-and-methodologies)
@@ -43,7 +45,7 @@
 
 **Q1. What is CSS, and why is it used in web development?**
 
-CSS (Cascading Style Sheets) is a stylesheet language used to describe the presentation and layout of web documents written in HTML or XML. It separates content from presentation, controlling colors, fonts, spacing, layout, animations, and more. In 2026, CSS has evolved into a powerful, near-programmatic layer with native nesting, cascade layers, container queries, and scroll-driven animations — reducing the need for JavaScript in many visual scenarios.
+CSS (Cascading Style Sheets) is a stylesheet language used to describe the presentation and layout of web documents written in HTML or XML. It separates content from presentation, controlling colors, fonts, spacing, layout, animations, and more. In 2026, CSS has evolved into a powerful, near-programmatic layer with native nesting, cascade layers, container queries, scroll-driven animations, anchor positioning, and inline conditional logic — reducing the need for JavaScript in many visual and UI-state scenarios.
 
 ### CSS Selectors
 
@@ -82,7 +84,7 @@ input[type="text"] { border: 1px solid #ccc; }
 :where(header, footer) a { text-decoration: none; }
 ```
 
-- **`:has()` Relational Selector (2026 widely supported):** Selects a parent based on its children — the long-awaited "parent selector."
+- **`:has()` Relational Selector (widely supported):** Selects a parent based on its children — the long-awaited "parent selector."
 ```css
 /* Style a card if it contains an image */
 .card:has(img) { padding: 0; }
@@ -98,7 +100,7 @@ CSS specificity determines which rule takes precedence when multiple rules targe
 - **B** — Class, attribute, and pseudo-class selectors (e.g., `.class`, `[attr]`, `:hover`)
 - **C** — Type and pseudo-element selectors (e.g., `div`, `::before`)
 
-Higher values win at each position from left to right. In 2026, **cascade layers** (`@layer`) add a new priority axis above specificity, allowing you to explicitly control which layer's rules win regardless of specificity.
+Higher values win at each position from left to right. In 2026, **cascade layers** (`@layer`) add a new priority axis above specificity, allowing you to explicitly control which layer's rules win regardless of specificity. `:where()` is useful when you deliberately want zero specificity.
 
 ### CSS Box Model
 
@@ -172,6 +174,8 @@ Multiple approaches depending on context:
 - **`fixed`** — Positioned relative to the viewport; unaffected by scroll.
 - **`sticky`** — Hybrid: behaves as `relative` until a scroll threshold is crossed, then acts as `fixed` within its container. Widely used for sticky headers and sidebars.
 
+> ✨ **2026 addition:** CSS Anchor Positioning adds a fifth paradigm — tethering an absolutely positioned element to any anchor element regardless of DOM location. See the [CSS Anchor Positioning](#css-anchor-positioning) section.
+
 ### Responsive Design and Media Queries
 
 **Q10. How do you create a responsive design in CSS?**
@@ -221,7 +225,7 @@ Mobile-first (`min-width`) is generally recommended as it tends to produce leane
 
 **Q13. What are CSS variables, and why are they useful?**
 
-CSS custom properties (variables) are user-defined values prefixed with `--` that cascade and inherit like any CSS property. In 2026, they are central to design tokens, theming, and component-level customization. They can be read and written from JavaScript at runtime.
+CSS custom properties (variables) are user-defined values prefixed with `--` that cascade and inherit like any CSS property. In 2026, they are central to design tokens, theming, and component-level customization. They can be read and written from JavaScript at runtime, and are queryable via container style queries and the new `if()` function.
 
 ```css
 :root {
@@ -237,7 +241,7 @@ CSS custom properties (variables) are user-defined values prefixed with `--` tha
 
 **Q14. How do CSS variables differ from SASS/LESS variables?**
 
-CSS custom properties are **live** — they cascade, inherit, can be scoped to elements, and can be changed at runtime via JavaScript or `@media`/`@container` rules. SASS/LESS variables are **static** — they are resolved at compile time and produce no dynamic behavior in the browser.
+CSS custom properties are **live** — they cascade, inherit, can be scoped to elements, and can be changed at runtime via JavaScript or `@media`/`@container` rules. SASS/LESS variables are **static** — they are resolved at compile time and produce no dynamic behavior in the browser. In 2026, with the addition of `if()` and style queries, CSS custom properties can also drive conditional logic natively.
 
 ---
 
@@ -318,6 +322,8 @@ CSS Grid is a two-dimensional layout system for placing items in both rows and c
 }
 ```
 
+> ✨ **2026 note:** Native CSS Masonry (also called CSS Grid Lanes in some proposals) is in active development and experimental in Chrome Canary and Firefox Nightly. It will allow Pinterest-style staggered layouts without JavaScript. Keep an eye on `display: masonry` / `masonry-auto-flow` syntax for production readiness.
+
 ---
 
 ## CSS Transforms and Animations
@@ -359,7 +365,8 @@ CSS Grid is a two-dimensional layout system for placing items in both rows and c
 - **`px`** — Absolute unit. Fixed size regardless of context.
 - **`em`** — Relative to the element's own font size (or parent's if used for font-size).
 - **`rem`** — Relative to the root (`<html>`) font size. Consistent reference throughout.
-- **`dvh` / `dvw` / `svh` / `lvh`** (2024–2026) — Dynamic/small/large viewport units that account for mobile browser chrome (address bar resizing). Prefer `dvh` over `vh` for full-height layouts on mobile.
+- **`dvh` / `dvw` / `svh` / `lvh`** — Dynamic/small/large viewport units that account for mobile browser chrome (address bar resizing). Prefer `dvh` over `vh` for full-height layouts on mobile.
+- **`cqi` / `cqb`** — Container query inline/block units, relative to the nearest container.
 
 ```css
 .hero {
@@ -391,6 +398,7 @@ They insert generated content before/after an element's content, often used for 
 - **`:where()`** — Same as `:is()` but with zero specificity.
 - **`:focus-visible`** — Applies focus styles only when the browser determines keyboard/programmatic focus (not mouse click), improving accessibility without removing visible focus outlines.
 - **`:popover-open`** — Styles elements currently shown via the Popover API.
+- **`:state()`** — Exposes internal states of custom elements (part of the Custom State Pseudo-Class API), allowing external CSS to style component states like `:checked` or `:loading`.
 
 ```css
 button:focus-visible {
@@ -423,7 +431,7 @@ Cascade layers, introduced in CSS and now broadly supported, let you explicitly 
 }
 ```
 
-This solves specificity wars at scale and is a core pattern in modern CSS architecture, superseding some use cases for `!important`.
+This solves specificity wars at scale and is a core pattern in modern CSS architecture, superseding many use cases for `!important`. Tailwind CSS v4 is built on this model.
 
 ---
 
@@ -431,7 +439,7 @@ This solves specificity wars at scale and is a core pattern in modern CSS archit
 
 **Q28. What is native CSS nesting, and how does it work?**
 
-As of 2024–2026, CSS nesting is natively supported in all major browsers without a preprocessor. It allows you to write nested rules directly in CSS:
+CSS nesting is natively supported in all major browsers without a preprocessor. It allows you to write nested rules directly in CSS:
 
 ```css
 .card {
@@ -453,7 +461,7 @@ As of 2024–2026, CSS nesting is natively supported in all major browsers witho
 }
 ```
 
-The `&` refers to the parent selector. This reduces repetition and improves readability without requiring SASS or PostCSS.
+The `&` refers to the parent selector. This reduces repetition and improves readability without requiring SASS or PostCSS. Note that while SASS nesting required `&` for pseudo-classes and pseudo-elements, native CSS nesting requires `&` in more contexts to avoid ambiguity — e.g., `& h2` (not just `h2`) when the nested selector starts with a tag name.
 
 ---
 
@@ -491,17 +499,24 @@ Beyond size, you can also query custom property values on a container:
 }
 ```
 
+> ✨ **2026 note:** Container **scroll-state queries** are an emerging addition, allowing styles to react to whether a container is currently scrolled, stuck (sticky), or snapping:
+> ```css
+> @container scroll-state(stuck: top) {
+>   .sticky-header { box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+> }
+> ```
+
 ---
 
 ## CSS Scope
 
 **Q31. What is `@scope` in CSS?**
 
-`@scope` lets you limit where styles apply, preventing leakage into unintended subtrees. It allows scoping without relying on specificity tricks or BEM:
+`@scope` lets you limit where styles apply, preventing leakage into unintended subtrees. It allows scoping without relying on specificity tricks or BEM. It is now production-ready in Chrome and Safari, with Firefox support underway:
 
 ```css
 @scope (.card) to (.card-footer) {
-  p { font-size: 0.9rem; color: #555; } /* Only p elements inside .card but not inside .card-footer */
+  p { font-size: 0.9rem; color: #555; } /* Only p inside .card but not inside .card-footer */
 }
 ```
 
@@ -537,16 +552,21 @@ Key logical property pairs:
 
 CSS now supports modern color spaces and functions that provide wider gamuts, perceptually uniform gradients, and more predictable color manipulation:
 
-- **`oklch()`** — Perceptually uniform lightness-chroma-hue; excellent for accessible color systems and smooth gradients.
+- **`oklch()`** — Perceptually uniform lightness-chroma-hue; excellent for accessible color systems and smooth gradients. Recommended for design tokens.
 - **`oklab()`** — Perceptually uniform lab space for smooth color interpolation.
 - **`color-mix()`** — Mix two colors in a specified color space.
-- **`light-dark()`** — Shorthand for providing light and dark mode color values.
+- **`light-dark()`** — Shorthand for providing light and dark mode color values without a media query.
 - **`color(display-p3 ...)`** — Access wide-gamut P3 color space for vivid colors on supporting displays.
+- **`relative color syntax`** — Derive a new color from an existing variable by adjusting individual channels:
 
 ```css
 :root {
   --brand: oklch(60% 0.2 250);
-  --brand-light: oklch(80% 0.15 250);
+}
+
+/* Relative color: lighten brand by raising L channel */
+.badge-subtle {
+  background: oklch(from var(--brand) calc(l + 0.2) c h);
 }
 
 .badge {
@@ -561,7 +581,7 @@ CSS now supports modern color spaces and functions that provide wider gamuts, pe
 
 **Q34. What are scroll-driven animations in CSS?**
 
-Scroll-driven animations (broadly supported since 2024) allow CSS animations to be driven by scroll progress rather than time, entirely in CSS with no JavaScript:
+Scroll-driven animations (broadly supported since 2024 in Chrome/Edge/Safari; Firefox support is in active development) allow CSS animations to be driven by scroll progress rather than time, entirely in CSS with no JavaScript:
 
 ```css
 @keyframes reveal {
@@ -587,13 +607,15 @@ Scroll-driven animations (broadly supported since 2024) allow CSS animations to 
 }
 ```
 
+Always pair scroll-driven animations with `@media (prefers-reduced-motion: reduce)` fallbacks for accessibility.
+
 ---
 
 ## View Transitions API
 
 **Q35. What is the View Transitions API and how is it used in CSS?**
 
-The View Transitions API enables animated transitions between DOM states (single-page) or between page navigations (multi-page, with `@view-transition`). The browser captures before/after snapshots and animates between them:
+The View Transitions API enables animated transitions between DOM states (single-page) or between page navigations (multi-page, with `@view-transition`). Same-document View Transitions reached **Baseline** status in 2025 and are production-ready. The browser captures before/after snapshots and animates between them:
 
 ```css
 /* Default cross-fade is automatic; customize with pseudo-elements */
@@ -606,7 +628,7 @@ The View Transitions API enables animated transitions between DOM states (single
 
 /* Named transitions on specific elements */
 .hero-image {
-  view-transition-name: hero;
+  view-transition-name: hero; /* Must be unique on the page */
 }
 ```
 
@@ -617,11 +639,105 @@ For multi-page apps, opt in with:
 }
 ```
 
+> ⚠️ **Common pitfall:** `view-transition-name` values must be unique per page. Duplicate names will break the transition silently.
+
+---
+
+## CSS Anchor Positioning ✨
+
+**Q36. What is CSS Anchor Positioning, and when would you use it?**
+
+CSS Anchor Positioning allows an absolutely or fixed-positioned element to be tethered to any other element on the page (the "anchor"), regardless of DOM structure. This eliminates the need for JavaScript-based positioning libraries (like Floating UI or Popper.js) for tooltips, dropdowns, popovers, and context menus.
+
+**Browser support (2026):** Chrome, Edge, and Safari support it. Firefox added support behind a flag in Firefox 145. A polyfill from OddBird provides coverage for older browsers.
+
+```css
+/* Define the anchor */
+.trigger {
+  anchor-name: --my-anchor;
+}
+
+/* Position relative to the anchor */
+.tooltip {
+  position: absolute;
+  position-anchor: --my-anchor;
+  position-area: top center;       /* Place it above and centered */
+  position-try-fallbacks: flip-block, flip-inline; /* Auto-reposition if it overflows */
+  margin-bottom: 0.5rem;
+}
+```
+
+Key properties:
+- `anchor-name` — Registers an element as a named anchor.
+- `position-anchor` — Links a positioned element to a named anchor.
+- `position-area` — Uses a 3×3 grid model to describe where around the anchor the element should appear.
+- `anchor()` — Function for precise inset-based positioning relative to anchor edges.
+- `position-try-fallbacks` — List of alternative positions if the default overflows the viewport.
+
+```css
+/* Using anchor() function for precise control */
+.dropdown {
+  position: fixed;
+  position-anchor: --nav-button;
+  top: anchor(bottom);
+  left: anchor(left);
+  min-width: anchor-size(width);  /* Match the anchor's width */
+}
+```
+
+Use `@supports (anchor-name: --test)` for progressive enhancement while Firefox catches up.
+
+---
+
+## CSS `if()` Function ✨
+
+**Q37. What is the CSS `if()` function, and how does it work?**
+
+The `if()` function brings inline conditional logic directly into CSS property values. Instead of scattering conditions across separate `@media`, `@container`, or `@supports` blocks, you can express the condition exactly where the value is used.
+
+**Browser support (2026):** Available in Chrome/Edge 137+ and Chromium-based browsers. Safari and Firefox support is under development. Use progressive enhancement with sensible defaults.
+
+```css
+/* Syntax: if(condition: value; else: fallback) */
+
+/* Respect reduced-motion preference inline */
+.card {
+  transition-duration: if(
+    media(prefers-reduced-motion: reduce): 0ms;
+    else: 180ms
+  );
+}
+
+/* Conditional theming from a custom property */
+.badge {
+  background: if(
+    style(--variant: success): oklch(70% 0.2 145);
+    style(--variant: error):   oklch(60% 0.25 27);
+    else: oklch(65% 0.1 250)
+  );
+}
+
+/* Inline feature query */
+body {
+  background-color: if(
+    supports(color: oklch(0 0 0)): oklch(0.7 0.185 232);
+    else: #00adf3
+  );
+}
+```
+
+The `if()` function supports three condition types:
+- **`style(...)`** — Evaluates a CSS custom property value (style query).
+- **`media(...)`** — Evaluates a media feature inline.
+- **`supports(...)`** — Evaluates a feature support query inline.
+
+This is especially powerful for design token systems, where theming logic can live inside property declarations rather than in component class variants.
+
 ---
 
 ## CSS Houdini and Custom Properties
 
-**Q36. What is CSS Houdini, and what is `@property`?**
+**Q38. What is CSS Houdini, and what is `@property`?**
 
 CSS Houdini exposes CSS engine internals to JavaScript, enabling low-level styling APIs. Most practically today, `@property` registers typed custom properties with animation support:
 
@@ -642,17 +758,17 @@ CSS Houdini exposes CSS engine internals to JavaScript, enabling low-level styli
 }
 ```
 
-Without `@property`, custom properties in `@keyframes` would not animate. `@property` also adds type checking and fallback values to custom properties.
+Without `@property`, custom properties in `@keyframes` would not animate. `@property` also adds type checking and fallback values to custom properties. It pairs well with the `if()` function and style queries for strongly-typed design tokens.
 
 ---
 
 ## CSS Preprocessors (e.g., SASS)
 
-**Q37. What is a CSS preprocessor, and is SASS still relevant in 2026?**
+**Q39. What is a CSS preprocessor, and is SASS still relevant in 2026?**
 
-CSS preprocessors like SASS extend CSS with variables, functions, mixins, and nesting. In 2026, with native CSS nesting, custom properties, and `@layer`, many SASS features are now available natively. However, SASS/SCSS remains useful for compile-time logic, complex mixins, loops, and large codebases with build pipelines.
+CSS preprocessors like SASS extend CSS with variables, functions, mixins, and nesting. In 2026, with native CSS nesting, custom properties, `@layer`, and the `if()` function, many SASS features are now available natively. However, SASS/SCSS remains useful for compile-time logic, complex mixins, loops, and large codebases with build pipelines. The case for SASS narrows further each year.
 
-**Q38. How do you define a variable in SASS?**
+**Q40. How do you define a variable in SASS?**
 
 ```scss
 $primary-color: #3498db;
@@ -668,7 +784,7 @@ In modern CSS-first projects, prefer CSS custom properties for runtime flexibili
 
 ## CSS Architecture and Methodologies
 
-**Q39. What is the BEM methodology?**
+**Q41. What is the BEM methodology?**
 
 BEM (Block, Element, Modifier) provides a naming convention: blocks are standalone components, elements are parts of blocks (`.block__element`), and modifiers change appearance (`.block--modifier`). It avoids specificity conflicts by keeping all selectors at single-class depth.
 
@@ -679,7 +795,7 @@ BEM (Block, Element, Modifier) provides a naming convention: blocks are standalo
 </div>
 ```
 
-**Q40. How do cascade layers change CSS architecture?**
+**Q42. How do cascade layers change CSS architecture?**
 
 Cascade layers (`@layer`) allow architecting CSS in explicit priority tiers, reducing the need for BEM's specificity-avoidance strategy. A typical layered architecture:
 
@@ -689,32 +805,37 @@ Cascade layers (`@layer`) allow architecting CSS in explicit priority tiers, red
 
 Rules in later-declared layers always win over earlier layers, regardless of specificity. This aligns with utility-first frameworks like Tailwind and integrates well with design token systems.
 
-**Q41. What is the utility-first CSS methodology?**
+**Q43. What is the utility-first CSS methodology?**
 
-Utility-first CSS (popularized by Tailwind CSS) composes styles entirely from single-purpose utility classes rather than semantic component classes. It avoids CSS file growth by reusing classes across the HTML. Tailwind v4 (2025) rebuilds around a CSS-native architecture using cascade layers and `@property`.
+Utility-first CSS (popularized by Tailwind CSS) composes styles entirely from single-purpose utility classes rather than semantic component classes. It avoids CSS file growth by reusing classes across the HTML. Tailwind v4 (2025) rebuilds around a CSS-native architecture using cascade layers, `@property`, and a CSS `@import`-based config — no JavaScript config file required.
 
 ---
 
 ## CSS Performance and Optimization
 
-**Q42. What are techniques for optimizing CSS performance?**
+**Q44. What are techniques for optimizing CSS performance?**
 
 - **Minification and concatenation** — Reduce file size and HTTP requests.
 - **Critical CSS** — Inline above-the-fold styles; defer the rest.
-- **`content-visibility: auto`** — Skips rendering of off-screen content sections, dramatically improving initial load time on long pages.
-- **`will-change`** — Hints to the browser to promote an element to its own compositor layer (use sparingly).
+- **`content-visibility: auto`** — Skips rendering of off-screen content sections, dramatically improving initial load time on long pages. Must be paired with `contain-intrinsic-size` to avoid layout shift.
+- **`will-change`** — Hints to the browser to promote an element to its own compositor layer (use sparingly; overuse wastes GPU memory).
 - **Avoiding layout thrashing** — Keep animations on `transform` and `opacity` (compositor-only properties) rather than properties that trigger layout (width, height, top, left).
 - **CSS `@layer`** — Reduces specificity wars that lead to bloated overrides.
 - **Reducing redundancy** — Use shorthand properties and design tokens.
+- **`text-wrap: balance` / `text-wrap: pretty`** — Native balanced/optimized text wrapping without JavaScript, reducing heading orphans.
 
 ```css
 .lazy-section {
   content-visibility: auto;
   contain-intrinsic-size: 0 500px; /* Estimated height to prevent layout shifts */
 }
+
+h1, h2, h3 {
+  text-wrap: balance; /* Prevents single-word orphan lines */
+}
 ```
 
-**Q43. What are CSS vendor prefixes and are they still needed?**
+**Q45. What are CSS vendor prefixes and are they still needed?**
 
 Vendor prefixes (`-webkit-`, `-moz-`, `-ms-`) were used for experimental properties. In 2026, most stable CSS properties no longer require them. Autoprefixer (a PostCSS plugin) handles any remaining cases automatically in build pipelines. Very few new features require manual prefixing.
 
@@ -722,9 +843,9 @@ Vendor prefixes (`-webkit-`, `-moz-`, `-ms-`) were used for experimental propert
 
 ## CSS Frameworks and Libraries
 
-**Q44. What are popular CSS frameworks in 2026?**
+**Q46. What are popular CSS frameworks in 2026?**
 
-- **Tailwind CSS v4** — Utility-first; rebuilt with a CSS-native engine (no config file, uses CSS `@import`). Industry-leading adoption.
+- **Tailwind CSS v4** — Utility-first; rebuilt with a CSS-native engine (CSS `@import` config, cascade layers, `@property`). Industry-leading adoption.
 - **Bootstrap 5** — Component-based; still widely used in enterprise/CMS contexts.
 - **Open Props** — CSS custom property primitives for design tokens, not a framework per se.
 - **PandaCSS** — Type-safe CSS-in-JS generating static CSS.
@@ -735,11 +856,11 @@ Vendor prefixes (`-webkit-`, `-moz-`, `-ms-`) were used for experimental propert
 
 ## CSS and Accessibility
 
-**Q45. Why is accessibility important in CSS?**
+**Q47. Why is accessibility important in CSS?**
 
 CSS directly controls visual presentation — contrast, focus styles, motion, and layout. Poor CSS choices can make content unreadable or unusable for people with visual, motor, or vestibular disabilities.
 
-**Q46. What are CSS best practices for accessibility?**
+**Q48. What are CSS best practices for accessibility?**
 
 - Ensure WCAG AA contrast ratios (4.5:1 for body text, 3:1 for large text). Use `oklch()` for accessible color math.
 - Never remove `:focus-visible` outlines without providing a clear replacement.
@@ -747,6 +868,7 @@ CSS directly controls visual presentation — contrast, focus styles, motion, an
 - Use `@media (prefers-contrast: more)` for high contrast mode adjustments.
 - Avoid `display: none` for visually hidden content that should remain accessible — use the `.sr-only` pattern instead.
 - Use logical properties for RTL support.
+- Ensure anchor-positioned elements maintain accessible focus order; pair with the Popover API where possible, as the browser handles focus management automatically.
 
 ```css
 /* Accessible visually-hidden utility */
@@ -767,27 +889,30 @@ CSS directly controls visual presentation — contrast, focus styles, motion, an
 
 ## CSS Troubleshooting and Debugging
 
-**Q47. How do you troubleshoot CSS issues?**
+**Q49. How do you troubleshoot CSS issues?**
 
 - Use browser DevTools (Chrome, Firefox, Safari) to inspect the cascade, computed styles, and the **Layers** panel.
-- Chrome DevTools now includes a **CSS Overview** panel for auditing color contrast, font usage, and unused styles.
+- Chrome DevTools includes a **CSS Overview** panel for auditing color contrast, font usage, and unused styles.
 - Use `outline: 1px solid red` to debug layout/spacing issues.
-- Check for cascade layer ordering issues with the new Styles panel layer view.
+- Check for cascade layer ordering issues with the Styles panel layer view.
 - Use `@supports` to detect feature support and provide fallbacks.
+- The **Animations** tab in DevTools can inspect and scrub scroll-driven animations.
 
-**Q48. What are common CSS pitfalls in 2026?**
+**Q50. What are common CSS pitfalls in 2026?**
 
 - Forgetting `content-visibility` and `contain-intrinsic-size` together (omitting the latter causes layout shift).
 - Using `100vh` instead of `100dvh` on mobile, causing content to be hidden behind the browser bar.
 - Animating non-compositor properties (`width`, `margin`) instead of `transform`/`opacity`.
 - Using `@layer` without declaring the layer order upfront, leading to unpredictable cascade behavior.
-- Missing `view-transition-name` uniqueness (duplicate names break view transitions).
+- Missing `view-transition-name` uniqueness (duplicate names break view transitions silently).
+- Using `if()` in production without fallback defaults — unsupported browsers will fall back to `initial`, not the else value.
+- Applying `anchor-name` to elements that change position in the DOM without testing overflow fallbacks.
 
 ---
 
 ## CSS Best Practices
 
-**Q49. What are general best practices for writing clean, maintainable CSS in 2026?**
+**Q51. What are general best practices for writing clean, maintainable CSS in 2026?**
 
 - Use design tokens via CSS custom properties at `:root` for consistent theming.
 - Organize with `@layer` to avoid specificity wars.
@@ -798,17 +923,20 @@ CSS directly controls visual presentation — contrast, focus styles, motion, an
 - Minimize `!important` — use cascade layers instead.
 - Keep selectors shallow; avoid nesting more than 3 levels deep.
 - Document complex calculations and magic numbers with comments.
+- Use `@starting-style` for entry animations rather than JS-toggled classes.
+- Pair new features (`if()`, anchor positioning, scroll-driven animations) with `@supports` progressive enhancement until cross-browser coverage is complete.
 
 ---
 
 ## CSS Cross-Browser Compatibility
 
-**Q50. How do you achieve cross-browser compatibility in CSS?**
+**Q52. How do you achieve cross-browser compatibility in CSS?**
 
 - Use `@supports` for progressive enhancement of newer features.
 - Use Autoprefixer in your build pipeline for vendor prefixes.
 - Test in Chrome, Firefox, Safari, and their mobile counterparts.
 - Check [caniuse.com](https://caniuse.com) for feature support tables.
+- Check [Baseline](https://web.dev/baseline) status — a signal maintained by the WebDX Community Group indicating when a feature is broadly safe without polyfills.
 - Provide sensible fallbacks before modern syntax:
 
 ```css
@@ -817,13 +945,22 @@ CSS directly controls visual presentation — contrast, focus styles, motion, an
   background: #3498db;                          /* Legacy */
   background: oklch(55% 0.18 250);              /* Modern */
 }
+
+/* Progressive enhancement with @supports */
+@supports (anchor-name: --test) {
+  .tooltip {
+    position: absolute;
+    position-anchor: --trigger;
+    position-area: top center;
+  }
+}
 ```
 
 ---
 
 ## Miscellaneous
 
-**Q51. What is the `aspect-ratio` property?**
+**Q53. What is the `aspect-ratio` property?**
 
 `aspect-ratio` sets a preferred aspect ratio for an element, eliminating the need for the "padding-top hack" for responsive iframes and images:
 
@@ -839,9 +976,9 @@ img {
 }
 ```
 
-**Q52. What is the CSS Popover API and how does CSS interact with it?**
+**Q54. What is the CSS Popover API and how does CSS interact with it?**
 
-The native Popover API (HTML attribute `popover` + `popovertarget`) allows dismissible overlays without JavaScript state management. CSS controls their appearance:
+The native Popover API (HTML attribute `popover` + `popovertarget`) reached **Baseline** status in 2025 and allows dismissible overlays without JavaScript state management. CSS controls their appearance:
 
 ```css
 [popover] {
@@ -851,7 +988,7 @@ The native Popover API (HTML attribute `popover` + `popovertarget`) allows dismi
 }
 
 [popover]:popover-open {
-  display: flex; /* Overrides the browser default block */
+  display: flex;
 }
 
 /* Animate popover entry/exit using @starting-style */
@@ -871,9 +1008,9 @@ The native Popover API (HTML attribute `popover` + `popovertarget`) allows dismi
 }
 ```
 
-**Q53. What is `@starting-style`?**
+**Q55. What is `@starting-style`?**
 
-`@starting-style` defines the initial style state for an element being added to the DOM or transitioning from `display: none`. This enables entry animations purely in CSS:
+`@starting-style` defines the initial style state for an element being added to the DOM or transitioning from `display: none`. This enables entry animations purely in CSS, avoiding the need for JavaScript-toggled classes:
 
 ```css
 .dialog {
@@ -890,7 +1027,24 @@ The native Popover API (HTML attribute `popover` + `popovertarget`) allows dismi
 }
 ```
 
-**Q54. How do you load CSS efficiently for performance?**
+**Q56. What is `text-wrap: balance` and `text-wrap: pretty`?**
+
+These values optimize how text wraps within its container, eliminating awkward single-word lines (orphans) without JavaScript:
+
+- **`text-wrap: balance`** — Distributes text as evenly as possible across all lines. Best for headings and short blocks of text.
+- **`text-wrap: pretty`** — Optimizes for the last line specifically to avoid orphans. Best for body paragraphs.
+
+```css
+h1, h2, h3 {
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+```
+
+**Q57. How do you load CSS efficiently for performance?**
 
 - **Critical CSS inline** — Inline above-the-fold styles in `<style>` to prevent render-blocking.
 - **`<link rel="preload">`** — Hint the browser to fetch CSS early.
@@ -911,13 +1065,18 @@ The native Popover API (HTML attribute `popover` + `popovertarget`) allows dismi
 - [MDN Web Docs — CSS](https://developer.mozilla.org/en-US/docs/Web/CSS)
 - [web.dev/css](https://web.dev/learn/css/) — Google's structured CSS learning path
 - [caniuse.com](https://caniuse.com) — Browser support tables
+- [web.dev/baseline](https://web.dev/baseline) — Cross-browser feature readiness signal
 - [CSS Tricks](https://css-tricks.com) — Articles, guides, and the Almanac
 - [Lea Verou's Blog](https://lea.verou.me) — Deep dives into modern CSS
+- [OddBird CSS Blog](https://www.oddbird.net/tags/css/) — Cutting-edge CSS specs and experiments
 
 ### What to Watch (2026 Horizon)
-- **CSS Functions & Mixins (`@function`)** — Custom reusable CSS functions (in spec development)
-- **Anchor Positioning** — Position popups/tooltips relative to any anchor element without JavaScript
-- **CSS Masonry Layout** — Native masonry (Pinterest-style) as part of CSS Grid
+- **CSS `@function`** — Custom reusable CSS functions (in spec development; pairs with `if()` for design systems)
+- **CSS Masonry / Grid Lanes** — Native masonry layout; experimental in Chrome Canary and Firefox Nightly
+- **Container Scroll-State Queries** — Style elements based on scroll state (stuck, snapped, overflowing)
+- **Customizable `<select>`** — Fully styleable native select element; long-requested and nearing broad support
+- **Interest Invoker API** — CSS-native hover delay for tooltips (complement to Anchor Positioning + Popover API)
+- **`sibling-index()` / `sibling-count()`** — CSS functions to read an element's position among siblings, enabling staggered animations without JavaScript
 
 ---
 
